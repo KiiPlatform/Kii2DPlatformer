@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
+using KiiCorp.Cloud.Analytics;
 
 public class PlayerHealth : MonoBehaviour
 {	
@@ -68,6 +70,8 @@ public class PlayerHealth : MonoBehaviour
 
 					// ... Trigger the 'Die' animation state
 					anim.SetTrigger("Die");
+
+					SendDeathEvent ();
 				}
 			}
 		}
@@ -92,7 +96,7 @@ public class PlayerHealth : MonoBehaviour
 		UpdateHealthBar();
 
 		// Play a random clip of the player getting hurt.
-		int i = Random.Range (0, ouchClips.Length);
+		int i = UnityEngine.Random.Range (0, ouchClips.Length);
 		AudioSource.PlayClipAtPoint(ouchClips[i], transform.position);
 	}
 
@@ -104,5 +108,46 @@ public class PlayerHealth : MonoBehaviour
 
 		// Set the scale of the health bar to be proportional to the player's health.
 		healthBar.transform.localScale = new Vector3(healthScale.x * health * 0.01f, 1, 1);
+	}
+
+	void SendDeathEvent ()
+	{
+		Action<string> callback = delegate(string s) {
+			AnalyticsCallback (s);};
+		StartCoroutine (AnalyticsBlocking (callback));
+	}
+
+	private void login () {
+
+	}
+	
+	private void AnalyticsCallback (string errorMessage) {
+		if (errorMessage == null) {
+			Debug.Log ("Analytics event sent");
+		} else {
+			Debug.Log ("Sending Analytics event failed : " + errorMessage);
+		}
+	}
+	
+	IEnumerator AnalyticsBlocking (Action<string> callback) {
+		string errText = null;
+		try {
+			// Sending Kii Analytics event for game over stats
+			KiiEvent ev = KiiAnalytics.NewEvent("PlayerDeath");
+			
+			// Set key-value pairs
+			ev["time"] = Time.time;
+			
+			// Upload Event Data to Kii Cloud
+			KiiAnalytics.Upload(ev);
+	
+		} catch (CloudException e) {
+			errText = e.Message;
+		}
+		yield return null;
+		callback (errText);
+		yield return null;
+
+
 	}
 }

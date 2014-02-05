@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using KiiCorp.Cloud.Storage;
+using KiiCorp.Cloud.Analytics;
 
 [InitializeOnLoad]
 public class KiiAutoInitialize : ScriptableObject {
@@ -37,6 +38,38 @@ public class KiiAutoInitialize : ScriptableObject {
 
 		//Interested in Game Analytics? Get our Analytics SDK http://developer.kii.com/#/sdks
 		//More info: http://documentation.kii.com/en/guides/unity/managing-analytics
+		KiiAnalytics.Site analyticsAppSite = init.GetAnalyticsAppSiteValue();
+		string deviceID = GetDeviceID();
+		Debug.Log("KiiAnalyticsInit - DeviceId: " + deviceID);
+		// Create a Unity app at developer.kii.com and enter your own app_id, app_key and backend location here
+		KiiAnalytics.Initialize(appID, appKey, analyticsAppSite, deviceID);
+	}
+
+	static string GetDeviceID()
+	{
+		string deviceID = ReadDeviceIDFromStorage();
+		if (deviceID == null)
+		{
+			deviceID = Guid.NewGuid().ToString();
+			SaveDeviceID(deviceID);
+		}
+		return deviceID;
+	}
+
+	static string ReadDeviceIDFromStorage()
+	{
+		string id = PlayerPrefs.GetString("deviceId", null);
+		if (id == null || id.Length == 0)
+		{
+			id = Guid.NewGuid().ToString();
+		}
+		return id;
+	}
+
+	static void SaveDeviceID(string id)
+	{
+		PlayerPrefs.SetString("deviceId", id);
+		PlayerPrefs.Save();
 	}
 	
 	public static KiiAutoInitialize Instance {
@@ -107,6 +140,18 @@ public class KiiAutoInitialize : ScriptableObject {
 		if(site.Equals("CN"))
 			return Kii.Site.CN;
 		return Kii.Site.US;
+	}
+
+	public KiiAnalytics.Site GetAnalyticsAppSiteValue ()
+	{
+		string site = GetAppSite("US");
+		if(site.Equals("US"))
+			return KiiAnalytics.Site.US;
+		if(site.Equals("JP"))
+			return KiiAnalytics.Site.JP;
+		if(site.Equals("CN"))
+			return KiiAnalytics.Site.CN;
+		return KiiAnalytics.Site.US;
 	}
 
 }
