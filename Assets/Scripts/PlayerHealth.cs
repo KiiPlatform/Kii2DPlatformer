@@ -117,10 +117,6 @@ public class PlayerHealth : MonoBehaviour
 		StartCoroutine (AnalyticsBlocking (callback));
 	}
 
-	private void login () {
-
-	}
-	
 	private void AnalyticsCallback (string errorMessage) {
 		if (errorMessage == null) {
 			Debug.Log ("Analytics event sent");
