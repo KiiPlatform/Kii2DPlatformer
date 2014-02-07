@@ -19,9 +19,7 @@ public class AuthForm : MonoBehaviour {
 	void Update () {
 	
 	}
-
-
-
+	
 	void OnGUI () {
 		if (OnCallback)
 			GUI.enabled = false;
