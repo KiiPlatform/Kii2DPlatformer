@@ -1,5 +1,33 @@
+Kii-2D-Platformer v0.3 (SDK v1.4)
+=================================
+
+A demo of using basic Kii functionality on a Unity 2D game
+
+Note: if you just want to install Kii Game Cloud support with no demo
+game you just need to get the barebones package available at:
+https://www.assetstore.unity3d.com/#/content/15017
+
+This project is also available on Github:
+https://github.com/KiiPlatform/Kii2DPlatformer
+
+Files
+-----
+
+There are 3 files in the Scripts folder that include Kii Cloud API calls:
+
+1) AuthForm: used to sign-in/sign-up a user and initialize the backend
+   and to send asynchronous user sign-in/sign-up requests to the backend
+2) Score: used to send and receive player high scores from the backend
+3) PlayerHealth: used to send Kii analytics events when the player dies
+   
+Build Settings Order
+--------------------
+
+Scenes/Auth.unity
+Scenes/Level.unity
+
 Create your own Game Cloud
-==========================
+--------------------------
 
 1) Create an account at http://developer.kii.com
 2) Create an application as explained in "Register an application"
@@ -15,17 +43,17 @@ http://documentation.kii.com/en/starts/unity/
 options:
   a) Go to "Kii Game Cloud" editor menu and setup your keys there
   b) Edit file Assets/Plugins/KiiConfig.txt and add your keys there
-  c) Replace those keys in file Scripts/KiiAutoInitialize.cs in the
+  c) Replace those keys in file KiiAutoInitialize.cs in the
   Kii.Initialize() method directly
 
 Want more info?
-================
+---------------
 
 More demos: http://docs.kii.com/en/samples/
 Game Cloud Tutorial: http://docs.kii.com/en/samples/Gamecloud-Unity/
 
 Interested in Game Analytics?
-=============================
+-----------------------------
 
 We also offer a dedicated Unity SDK for Game Analytics which you can
 download here: http://developer.kii.com/#/sdks
