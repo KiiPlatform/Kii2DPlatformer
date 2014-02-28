@@ -7,6 +7,7 @@ public class Score : MonoBehaviour
 {
 	public int score = 0;					// The player's score.
 	public static int highscore = 0;
+	public static float avgDeath = 0;
 
 	private PlayerControl playerControl;	// Reference to the player control script.
 	private int previousScore = 0;			// The score in the previous frame.
@@ -27,7 +28,7 @@ public class Score : MonoBehaviour
 			if(highscore == 0)
 				LoadHighScore ();
 			string username = KiiUser.CurrentUser.Username;
-			guiText.text = "Score: " + score + "  Highscore: " + highscore + "  User: " + username;
+			guiText.text = "Score: " + score + "  Highscore: " + highscore + "\nUser: " + username + " Avg death: " + avgDeath + " s";
 		}
 		else
 			guiText.text = "Score: " + score;
@@ -54,6 +55,7 @@ public class Score : MonoBehaviour
 		KiiObject kiiObj = bucket.NewKiiObject ();
 		kiiObj ["score"] = score;
 		kiiObj ["time"] = Time.time;
+		kiiObj ["level"] = 1;
 		kiiObj ["delta_time"] = Time.deltaTime;
 		
 		kiiObj.Save((KiiObject obj, Exception e) => {

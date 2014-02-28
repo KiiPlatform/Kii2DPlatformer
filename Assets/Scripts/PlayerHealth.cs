@@ -2,6 +2,7 @@
 using System.Collections;
 using System;
 using KiiCorp.Cloud.Analytics;
+using System.Collections.Generic;
 
 public class PlayerHealth : MonoBehaviour
 {	
@@ -27,6 +28,11 @@ public class PlayerHealth : MonoBehaviour
 
 		// Getting the intial scale of the healthbar (whilst the player has full health).
 		healthScale = healthBar.transform.localScale;
+	}
+
+	void Start ()
+	{
+		FetchAvgDeathTime ();
 	}
 
 
@@ -72,6 +78,7 @@ public class PlayerHealth : MonoBehaviour
 					anim.SetTrigger("Die");
 
 					SendDeathEvent ();
+					FetchAvgDeathTime();
 				}
 			}
 		}
@@ -114,7 +121,7 @@ public class PlayerHealth : MonoBehaviour
 	{
 		Action<string> callback = delegate(string s) {
 			AnalyticsCallback (s);};
-		StartCoroutine (AnalyticsBlocking (callback));
+		StartCoroutine (SendAnalyticsBlocking (callback));
 	}
 
 	private void AnalyticsCallback (string errorMessage) {
@@ -125,14 +132,15 @@ public class PlayerHealth : MonoBehaviour
 		}
 	}
 	
-	IEnumerator AnalyticsBlocking (Action<string> callback) {
+	IEnumerator SendAnalyticsBlocking (Action<string> callback) {
 		string errText = null;
 		try {
 			// Sending Kii Analytics event for game over stats
 			KiiEvent ev = KiiAnalytics.NewEvent("PlayerDeath");
 			
 			// Set key-value pairs
-			ev["time"] = Time.time;
+			ev ["time"] = Time.time;
+			ev ["level"] = 1;
 			
 			// Upload Event Data to Kii Cloud
 			KiiAnalytics.Upload(ev);
@@ -143,7 +151,45 @@ public class PlayerHealth : MonoBehaviour
 		yield return null;
 		callback (errText);
 		yield return null;
+	}
 
+	void FetchAvgDeathTime ()
+	{
+		Action<string> callback = delegate(string s) {
+			AnalyticsCallback (s);};
+		StartCoroutine (FetchAnalyticsBlocking (callback));
+	}
 
+	IEnumerator FetchAnalyticsBlocking (Action<string> callback)
+	{
+		Debug.Log("Getting analytics snapshots");
+		string errText = null;
+		// Define filters
+		ResultCondition condition = new ResultCondition();
+		//condition.AddFilter("AppVersion", "9");
+		//condition.AddFilter("location", "UK");
+		//condition.GroupingKey = "gender";
+		//condition.GroupingKey = "UserLevel";
+		condition.DateRange = new DateRange(new DateTime(2014, 2, 2), new DateTime(2014, 2, 27));
+		
+		try
+		{
+			GroupedResult result = KiiAnalytics.GetResult("143", condition);
+			IList<GroupedSnapShot> snapshots = result.SnapShots;
+			Debug.Log("Cycling through analytics snapshots");
+			foreach (GroupedSnapShot snapshot in snapshots)
+			{
+				Debug.Log ("Found a snapshot: " + snapshot.Data);
+				JsonOrg.JsonArray array = snapshot.Data;
+				Score.avgDeath = (float)array.GetDouble(0);
+			}
+		}
+		catch (Exception e)
+		{
+			errText = e.Message;
+		}
+		yield return null;
+		callback (errText);
+		yield return null;
 	}
 }
