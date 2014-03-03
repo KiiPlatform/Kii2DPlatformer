@@ -126,9 +126,9 @@ public class PlayerHealth : MonoBehaviour
 
 	private void AnalyticsCallback (string errorMessage) {
 		if (errorMessage == null) {
-			Debug.Log ("Analytics event sent");
+			Debug.Log ("Analytics processing successful");
 		} else {
-			Debug.Log ("Sending Analytics event failed : " + errorMessage);
+			Debug.Log ("Analytics processing failed : " + errorMessage);
 		}
 	}
 	
@@ -170,7 +170,7 @@ public class PlayerHealth : MonoBehaviour
 		//condition.AddFilter("location", "UK");
 		//condition.GroupingKey = "gender";
 		//condition.GroupingKey = "UserLevel";
-		condition.DateRange = new DateRange(new DateTime(2014, 2, 2), new DateTime(2014, 2, 27));
+		condition.DateRange = new DateRange(new DateTime(2014, 2, 2), DateTime.Now);
 		
 		try
 		{
@@ -181,7 +181,15 @@ public class PlayerHealth : MonoBehaviour
 			{
 				Debug.Log ("Found a snapshot: " + snapshot.Data);
 				JsonOrg.JsonArray array = snapshot.Data;
-				Score.avgDeath = (float)array.GetDouble(0);
+				int j = 0;
+				for(int i = array.Length(); i > 0 ; i--){
+					if(array.Get(i - 1).GetType() == typeof(JsonOrg.JsonNull))
+						j++;
+					else
+						Score.avgDeath += (float)array.GetDouble(i - 1);
+
+				}
+				Score.avgDeath /= (array.Length() - j);
 			}
 		}
 		catch (Exception e)

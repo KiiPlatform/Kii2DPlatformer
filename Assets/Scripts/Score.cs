@@ -70,9 +70,6 @@ public class Score : MonoBehaviour
 		if (KiiUser.CurrentUser == null) {
 			return;
 		}
-		//if (highscore > 0) {
-		//	return highscore;
-		//}
 		
 		KiiUser user = KiiUser.CurrentUser;
 		KiiBucket bucket = user.Bucket ("scores");
