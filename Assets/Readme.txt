@@ -45,6 +45,11 @@ options:
   b) Edit file Assets/Plugins/KiiConfig.txt and add your keys there
   c) Replace those keys in file KiiAutoInitialize.cs in the
   Kii.Initialize() method directly
+Important: options a) and b) will only work in Editor mode. If you want
+to initialize Kii when building for a specific platform you'll have to
+use c). If you're bulding for Android make sure the Stripping level in
+your project settings is set to "Disabled" and that the Internet setting
+is set to "Require" (not "Auto").
 
 Want more info?
 ---------------

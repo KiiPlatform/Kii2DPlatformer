@@ -77,6 +77,7 @@ public class PlayerHealth : MonoBehaviour
 					// ... Trigger the 'Die' animation state
 					anim.SetTrigger("Die");
 
+					Score.LoadHighScore();
 					SendDeathEvent ();
 					FetchAvgDeathTime();
 				}
@@ -128,7 +129,7 @@ public class PlayerHealth : MonoBehaviour
 		if (errorMessage == null) {
 			Debug.Log ("Analytics processing successful");
 		} else {
-			Debug.Log ("Analytics processing failed : " + errorMessage);
+			Debug.LogError ("Analytics processing failed : " + errorMessage);
 		}
 	}
 	
@@ -173,8 +174,8 @@ public class PlayerHealth : MonoBehaviour
 		condition.DateRange = new DateRange(new DateTime(2014, 2, 2), DateTime.Now);
 		
 		try
-		{
-			GroupedResult result = KiiAnalytics.GetResult("143", condition);
+		{	// My id is 147, but the ID must match the analytic rule you created on developer.kii.com
+			GroupedResult result = KiiAnalytics.GetResult("147", condition);
 			IList<GroupedSnapShot> snapshots = result.SnapShots;
 			Debug.Log("Cycling through analytics snapshots");
 			foreach (GroupedSnapShot snapshot in snapshots)
@@ -182,6 +183,7 @@ public class PlayerHealth : MonoBehaviour
 				Debug.Log ("Found a snapshot: " + snapshot.Data);
 				JsonOrg.JsonArray array = snapshot.Data;
 				int j = 0;
+				Score.avgDeath = 0;
 				for(int i = array.Length(); i > 0 ; i--){
 					if(array.Get(i - 1).GetType() == typeof(JsonOrg.JsonNull))
 						j++;

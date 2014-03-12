@@ -28,7 +28,7 @@ public class Score : MonoBehaviour
 			if(highscore == 0)
 				LoadHighScore ();
 			string username = KiiUser.CurrentUser.Username;
-			guiText.text = "Score: " + score + "  Highscore: " + highscore + "\nUser: " + username + " Avg death: " + avgDeath + " s";
+			guiText.text = "Score: " + score + "  Highscore: " + highscore + "\nUser: " + username + " Avg death: " + avgDeath.ToString("n2") + " s";
 		}
 		else
 			guiText.text = "Score: " + score;
@@ -38,7 +38,6 @@ public class Score : MonoBehaviour
 			// ... play a taunt.
 			playerControl.StartCoroutine(playerControl.Taunt());
 			SaveScore (score);
-			LoadHighScore ();
 		}
 
 		// Set the previous score to this frame's score.
@@ -80,7 +79,7 @@ public class Score : MonoBehaviour
 		bucket.Query(query, (KiiQueryResult<KiiObject> list, Exception e) =>{
 			if (e != null)
 			{
-				Debug.Log ("Failed to load high score " + e.ToString());
+				Debug.LogError ("Failed to load high score " + e.ToString());
 			} else {
 				foreach (KiiObject obj in list) {
 					highscore = obj.GetInt ("score", 0);
