@@ -2,6 +2,7 @@
 using System.Collections;
 using KiiCorp.Cloud.Storage;
 using System;
+using KiiCorp.Cloud.Analytics;
 
 public class AuthForm : MonoBehaviour {
 
@@ -12,7 +13,10 @@ public class AuthForm : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-	
+	// KiiAutoInitialize and Editor based configuration only work when you test your game in Editor mode
+	// For game deployment (eg. on Android/iOS) intialize like above via an early loading game object
+		//Kii.Initialize("your_app_id", "your_app_key", Kii.Site.your_server_location);
+		//KiiAnalytics.Initialize("your_app_id", "your_app_key", KiiAnalytics.Site.your_server_location, "unique_device_id");
 	}
 	
 	// Update is called once per frame
@@ -31,7 +35,8 @@ public class AuthForm : MonoBehaviour {
 		GUILayout.BeginHorizontal ();
 		GUILayout.FlexibleSpace ();
 		GUILayout.BeginVertical ();
-		
+
+		GUI.contentColor = Color.blue;
 		GUILayout.Label ("Username");
 		username = GUILayout.TextField (username, GUILayout.MinWidth (200));
 		GUILayout.Space (10);

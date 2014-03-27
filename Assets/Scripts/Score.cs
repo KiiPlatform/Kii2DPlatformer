@@ -55,7 +55,6 @@ public class Score : MonoBehaviour
 		kiiObj ["score"] = score;
 		kiiObj ["time"] = Time.time;
 		kiiObj ["level"] = 1;
-		kiiObj ["delta_time"] = Time.deltaTime;
 		
 		kiiObj.Save((KiiObject obj, Exception e) => {
 			if (e != null)
