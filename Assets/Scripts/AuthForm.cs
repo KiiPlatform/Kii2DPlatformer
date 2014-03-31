@@ -35,34 +35,43 @@ public class AuthForm : MonoBehaviour {
 		GUILayout.BeginHorizontal ();
 		GUILayout.FlexibleSpace ();
 		GUILayout.BeginVertical ();
-
 		GUI.contentColor = Color.blue;
-		GUILayout.Label ("Username");
-		username = GUILayout.TextField (username, GUILayout.MinWidth (200));
-		GUILayout.Space (10);
-		GUILayout.Label ("Password");
-		password = GUILayout.PasswordField (password, '*', GUILayout.MinWidth (100));
-		GUILayout.Space (30);
 		
-		if (GUILayout.Button ("Login", GUILayout.MinHeight (50), GUILayout.MinWidth (100))) {
-			if( username.Length == 0 || password.Length == 0 )
-				Debug.Log ("Username/password can't be empty");
-			else {
-				Login ();
+		if (Kii.AppId == null || Kii.AppKey == null || Kii.AppId.Equals ("__KII_APP_ID__") || Kii.AppKey.Equals ("__KII_APP_KEY__")) {
+			GUILayout.Space (10);
+			GUILayout.Label ("Invalid API keys. See Assets/Readme.txt", GUILayout.ExpandWidth (false));
+			GUILayout.Space (20);
+			if (GUILayout.Button ("Get API Keys", GUILayout.MinHeight (50), GUILayout.MinWidth (100))) {
+				Application.OpenURL("http://developer.kii.com");
 			}
-		}
-		
-		if (GUILayout.Button ("Register", GUILayout.MinHeight (50), GUILayout.MinWidth (100))) {
-			if( username.Length == 0 || password.Length == 0 )
-				Debug.Log ("Username/password can't be empty");
-			else {
-				Register ();
+		} else {
+			GUILayout.Label ("Username");
+			username = GUILayout.TextField (username, GUILayout.MinWidth (200));
+			GUILayout.Space (10);
+			GUILayout.Label ("Password");
+			password = GUILayout.PasswordField (password, '*', GUILayout.MinWidth (100));
+			GUILayout.Space (30);
+			
+			if (GUILayout.Button ("Login", GUILayout.MinHeight (50), GUILayout.MinWidth (100))) {
+				if( username.Length == 0 || password.Length == 0 )
+					Debug.Log ("Username/password can't be empty");
+				else {
+					Login ();
+				}
 			}
-		}
-		
-		if (user != null) {
-			OnCallback = false;
-			Application.LoadLevel ("Level");
+			
+			if (GUILayout.Button ("Register", GUILayout.MinHeight (50), GUILayout.MinWidth (100))) {
+				if( username.Length == 0 || password.Length == 0 )
+					Debug.Log ("Username/password can't be empty");
+				else {
+					Register ();
+				}
+			}
+			
+			if (user != null) {
+				OnCallback = false;
+				Application.LoadLevel ("Level");
+			}
 		}
 
 		GUILayout.EndVertical ();

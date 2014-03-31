@@ -28,7 +28,10 @@ public class Score : MonoBehaviour
 			if(highscore == 0)
 				LoadHighScore ();
 			string username = KiiUser.CurrentUser.Username;
-			guiText.text = "Score: " + score + "  Highscore: " + highscore + "\nUser: " + username + " Avg death: " + avgDeath.ToString("n2") + " s";
+			if(GameConfig.ENABLE_ANALYTICS)
+				guiText.text = "Score: " + score + "  Highscore: " + highscore + "\nUser: " + username + " Avg death: " + avgDeath.ToString("n2") + " s";
+			else
+				guiText.text = "Score: " + score + "  Highscore: " + highscore + "\nUser: " + username;
 		}
 		else
 			guiText.text = "Score: " + score;
@@ -55,7 +58,7 @@ public class Score : MonoBehaviour
 		kiiObj ["score"] = score;
 		kiiObj ["time"] = Time.time;
 		kiiObj ["level"] = 1;
-		
+		Debug.Log ("Saving score...");
 		kiiObj.Save((KiiObject obj, Exception e) => {
 			if (e != null)
 				Debug.LogError(e.ToString());

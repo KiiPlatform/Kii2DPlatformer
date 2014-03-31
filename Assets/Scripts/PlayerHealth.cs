@@ -32,7 +32,8 @@ public class PlayerHealth : MonoBehaviour
 
 	void Start ()
 	{
-		FetchAvgDeathTime ();
+		if(GameConfig.ENABLE_ANALYTICS)
+			FetchAvgDeathTime ();
 	}
 
 
@@ -78,8 +79,11 @@ public class PlayerHealth : MonoBehaviour
 					anim.SetTrigger("Die");
 
 					Score.LoadHighScore();
-					SendDeathEvent ();
-					FetchAvgDeathTime();
+					if(GameConfig.ENABLE_ANALYTICS)
+					{
+						SendDeathEvent ();
+						FetchAvgDeathTime();
+				    }
 				}
 			}
 		}
@@ -174,7 +178,17 @@ public class PlayerHealth : MonoBehaviour
 		condition.DateRange = new DateRange(new DateTime(2014, 2, 2), DateTime.Now);
 		
 		try
-		{	// My id is 147, but the ID must match the analytic rule you created on developer.kii.com
+		{	// My id is 147, but the ID must match the analytic rule you should create on developer.kii.com this way:
+			// Go to developer.kii.com, go to your app's console
+			// Click on Analytics on the left side bar, then lick on "Create a new rule"
+			// Name your rule AvgDeathTime or whichever name you like, select "Event Data"
+			// In the function dropdown select "Avg" and in the field enter the word "time"
+			// In the type combo select "float"
+			// In the dimensions fields enter "time", "time" and "float"
+			// Click on Save and activate the rule
+			// Once active copy the ID assigned to the rule and replace the 147 below with that
+			// If you experience a big delay the first time you die please wait for several minutes until the game
+			// continues (we're looking into this bug)
 			GroupedResult result = KiiAnalytics.GetResult("147", condition);
 			IList<GroupedSnapShot> snapshots = result.SnapShots;
 			Debug.Log("Cycling through analytics snapshots");
