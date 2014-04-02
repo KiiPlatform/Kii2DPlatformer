@@ -50,9 +50,9 @@ to initialize Kii when building for a specific platform you'll have to
 use c). If you're bulding for Android make sure the Stripping level in
 your project settings is set to "Disabled" and that the Internet setting
 is set to "Require" (not "Auto").
-5) If you want to use analytics (and saw an analytics related exception)
+5) If you want to use analytics (and saw an analytics related debug message)
 in the game please follow these instructions:
-In PlayerHealth.cs the analytics rule id is 147, but the ID must match 
+In GameConfig.cs the analytics rule id is 0, but the ID must match 
 the analytic rule you should create on developer.kii.com this way:
 - Go to developer.kii.com, go to your app's console
 - Click on Analytics on the left side bar, then lick on "Create a new rule"
@@ -61,11 +61,8 @@ the analytic rule you should create on developer.kii.com this way:
 - In the type combo select "float"
 - In the dimensions fields enter "time", "time" and "float"
 - Click on Save and activate the rule
-- Once active copy the ID assigned to the rule and replace the 147 below
+- Once active copy the ID assigned to the rule and replace the 0 below
   with that
-- If you experience a big delay the first time you die please wait for several
-  minutes until the game continues or disable SendDeathEvent() until it's fixed
-  (we're looking into this bug)
 
 Want more info?
 ---------------

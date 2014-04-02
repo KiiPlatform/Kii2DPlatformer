@@ -6,7 +6,7 @@ using System;
 public class Score : MonoBehaviour
 {
 	public int score = 0;					// The player's score.
-	public static int highscore = 0;
+	public static int highscore = -1;
 	public static float avgDeath = 0;
 
 	private PlayerControl playerControl;	// Reference to the player control script.
@@ -25,8 +25,10 @@ public class Score : MonoBehaviour
 		// Set the score and user text.
 		if (KiiUser.CurrentUser != null)
 		{
-			if(highscore == 0)
+			if(highscore < 0) {
+				highscore = 0;
 				LoadHighScore ();
+			}
 			string username = KiiUser.CurrentUser.Username;
 			if(GameConfig.ENABLE_ANALYTICS)
 				guiText.text = "Score: " + score + "  Highscore: " + highscore + "\nUser: " + username + " Avg death: " + avgDeath.ToString("n2") + " s";

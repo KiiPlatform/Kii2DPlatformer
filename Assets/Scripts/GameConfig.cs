@@ -11,7 +11,8 @@ using System;
 
 	public class GameConfig
 	{
-			public static bool ENABLE_ANALYTICS = false;
+			public static bool ENABLE_ANALYTICS = true;		// See Assets/Readme.txt for instructions on how to use analytics
+			public static int ANALYTICS_RULE_ID = 0;		// See Assets/Readme.txt for instructions on how to replace this ID and use analytics
 	}
 
 

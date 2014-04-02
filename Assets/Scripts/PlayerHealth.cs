@@ -18,7 +18,6 @@ public class PlayerHealth : MonoBehaviour
 	private PlayerControl playerControl;		// Reference to the PlayerControl script.
 	private Animator anim;						// Reference to the Animator on the player
 
-
 	void Awake ()
 	{
 		// Setting up references.
@@ -160,6 +159,10 @@ public class PlayerHealth : MonoBehaviour
 
 	void FetchAvgDeathTime ()
 	{
+		if(GameConfig.ANALYTICS_RULE_ID == 0){
+			Debug.Log("See Assets/Readme.txt for instructions on how to replace the rule ID and use analytics");
+			return;
+		}
 		Action<string> callback = delegate(string s) {
 			AnalyticsCallback (s);};
 		StartCoroutine (FetchAnalyticsBlocking (callback));
@@ -189,7 +192,7 @@ public class PlayerHealth : MonoBehaviour
 			// Once active copy the ID assigned to the rule and replace the 147 below with that
 			// If you experience a big delay the first time you die please wait for several minutes until the game
 			// continues (we're looking into this bug)
-			GroupedResult result = KiiAnalytics.GetResult("147", condition);
+			GroupedResult result = KiiAnalytics.GetResult(GameConfig.ANALYTICS_RULE_ID.ToString(), condition);
 			IList<GroupedSnapShot> snapshots = result.SnapShots;
 			Debug.Log("Cycling through analytics snapshots");
 			foreach (GroupedSnapShot snapshot in snapshots)
