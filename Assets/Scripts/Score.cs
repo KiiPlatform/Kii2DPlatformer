@@ -41,7 +41,8 @@ public class Score : MonoBehaviour
 		// If the score has changed...
 		if(previousScore != score){
 			// ... play a taunt.
-			playerControl.StartCoroutine(playerControl.Taunt());
+			if(playerControl != null)
+				playerControl.StartCoroutine(playerControl.Taunt());
 			SaveScore (score);
 		}
 

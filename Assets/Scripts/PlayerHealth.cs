@@ -3,6 +3,7 @@ using System.Collections;
 using System;
 using KiiCorp.Cloud.Analytics;
 using System.Collections.Generic;
+using KiiCorp.Cloud.Storage;
 
 public class PlayerHealth : MonoBehaviour
 {	
@@ -123,21 +124,6 @@ public class PlayerHealth : MonoBehaviour
 
 	void SendDeathEvent ()
 	{
-		Action<string> callback = delegate(string s) {
-			AnalyticsCallback (s);};
-		StartCoroutine (SendAnalyticsBlocking (callback));
-	}
-
-	private void AnalyticsCallback (string errorMessage) {
-		if (errorMessage == null) {
-			Debug.Log ("Analytics processing successful");
-		} else {
-			Debug.LogError ("Analytics processing failed : " + errorMessage);
-		}
-	}
-	
-	IEnumerator SendAnalyticsBlocking (Action<string> callback) {
-		string errText = null;
 		try {
 			// Sending Kii Analytics event for game over stats
 			KiiEvent ev = KiiAnalytics.NewEvent("PlayerDeath");
@@ -145,16 +131,21 @@ public class PlayerHealth : MonoBehaviour
 			// Set key-value pairs
 			ev ["time"] = Time.time;
 			ev ["level"] = 1;
-			
+
 			// Upload Event Data to Kii Cloud
-			KiiAnalytics.Upload(ev);
-	
+			KiiAnalytics.Upload((Exception e) => {
+				if (e == null)
+				{
+					Debug.Log ("Analytics event upload successful");
+				} else {
+					Debug.Log ("Analytics event upload error: " + e.ToString());
+				}
+				
+			}, ev);
+			
 		} catch (CloudException e) {
-			errText = e.Message;
+			Debug.Log ("Analytics event upload error: " + e.ToString());
 		}
-		yield return null;
-		callback (errText);
-		yield return null;
 	}
 
 	void FetchAvgDeathTime ()
@@ -163,15 +154,8 @@ public class PlayerHealth : MonoBehaviour
 			Debug.Log("See Assets/Readme.txt for instructions on how to replace the rule ID and use analytics");
 			return;
 		}
-		Action<string> callback = delegate(string s) {
-			AnalyticsCallback (s);};
-		StartCoroutine (FetchAnalyticsBlocking (callback));
-	}
-
-	IEnumerator FetchAnalyticsBlocking (Action<string> callback)
-	{
 		Debug.Log("Getting analytics snapshots");
-		string errText = null;
+
 		// Define filters
 		ResultCondition condition = new ResultCondition();
 		//condition.AddFilter("AppVersion", "9");
@@ -190,33 +174,37 @@ public class PlayerHealth : MonoBehaviour
 			// In the dimensions fields enter "time", "time" and "float"
 			// Click on Save and activate the rule
 			// Once active copy the ID assigned to the rule and replace the 147 below with that
-			// If you experience a big delay the first time you die please wait for several minutes until the game
-			// continues (we're looking into this bug)
-			GroupedResult result = KiiAnalytics.GetResult(GameConfig.ANALYTICS_RULE_ID.ToString(), condition);
-			IList<GroupedSnapShot> snapshots = result.SnapShots;
-			Debug.Log("Cycling through analytics snapshots");
-			foreach (GroupedSnapShot snapshot in snapshots)
-			{
-				Debug.Log ("Found a snapshot: " + snapshot.Data);
-				JsonOrg.JsonArray array = snapshot.Data;
-				int j = 0;
-				Score.avgDeath = 0;
-				for(int i = array.Length(); i > 0 ; i--){
-					if(array.Get(i - 1).GetType() == typeof(JsonOrg.JsonNull))
-						j++;
-					else
-						Score.avgDeath += (float)array.GetDouble(i - 1);
 
+			KiiAnalytics.GetResult(GameConfig.ANALYTICS_RULE_ID.ToString(), condition, (string ruleId, ResultCondition condition2, GroupedResult result2, Exception e) => {
+				if (e == null)
+				{
+					Debug.Log ("Analytics event upload successful");
+					IList<GroupedSnapShot> snapshots = result2.SnapShots;
+					Debug.Log("Cycling through analytics snapshots");
+					foreach (GroupedSnapShot snapshot in snapshots)
+					{
+						Debug.Log ("Found a snapshot: " + snapshot.Data);
+						JsonOrg.JsonArray array = snapshot.Data;
+						int j = 0;
+						Score.avgDeath = 0;
+						for(int i = array.Length(); i > 0 ; i--){
+							if(array.Get(i - 1).GetType() == typeof(JsonOrg.JsonNull))
+								j++;
+							else
+								Score.avgDeath += (float)array.GetDouble(i - 1);
+							
+						}
+						Score.avgDeath /= (array.Length() - j);
+					}
+				} else {
+					Debug.Log ("Analytics snapshot fetch error: " + e.ToString());
 				}
-				Score.avgDeath /= (array.Length() - j);
-			}
+				
+			});
 		}
 		catch (Exception e)
 		{
-			errText = e.Message;
+			Debug.Log ("Analytics snapshot fetch error: " + e.ToString());
 		}
-		yield return null;
-		callback (errText);
-		yield return null;
 	}
 }
