@@ -1,5 +1,17 @@
 # Unity Cloud Storage SDK Changes:
 
+## v1.9.0.0 (Jun 13, 2014)
+md5: 6fc9836a8a8856c84cbfbce953ccf263
+
+### Improvements
+- Specify default timeout of API via the KiiInitializeBehavior.
+- Accept absence of ORIGIN in PUSH_TO_APP through APNS.
+- Implemented KiiACL#Equals(object) and KiiACLEntry#Equals(object) by comparing internal values.
+- Suppress error log message 'You are trying to load data from a www stream which had the following error when downloading.'
+
+### Bug fixes
+- Fixed a bug that callback doesn't work when push registration is failed.
+
 ## Release v1.8.2.0 (May 29, 2014 / File MD5: 4042c309d8ac1beb354cc50a6e64721e)
 
 ### Bug fixes

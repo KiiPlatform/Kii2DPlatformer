@@ -333,4 +333,5 @@ MonoBehaviour:
   AppID: 19178b42
   AppKey: d20904df7b425d529e57ef6dc3f670e3
   Site: 1
+  apiTimeout: 30
   ServerUrl: 
